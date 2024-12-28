@@ -3,32 +3,40 @@ from scipy.spatial.distance import cdist
 
 def calculate_silhouette_score(X, labels):
     n_samples = len(X)
-    unique_labels = np.unique(labels)
 
     silhouette_scores = []
 
     for i in range(n_samples):
-        # Punti e cluster
+        #Punti e cluster
         point = X[i]
-        cluster_label = labels[i]
+        cluster_label = int(labels[i][1])
 
-        # Punti dello stesso cluster (intra-cluster)
-        same_cluster_points = X[labels == cluster_label]
-        a = np.mean(cdist([point], same_cluster_points)[0])  # Distanza intra-cluster media
+        #Punti dello stesso cluster (intra-cluster)
+        same_cluster_points = []
+        for h in range(X.shape[0]):
+            if labels[h][1] == cluster_label :
+                same_cluster_points.append(X[h])
+        a = np.mean(cdist([point], same_cluster_points)[0])
 
-        # Distanza media al cluster più vicino (extra-cluster)
+        #Distanza media al cluster più vicino (extra-cluster)
         b = np.inf
-        for label in unique_labels:
-            if label != cluster_label:
-                other_cluster_points = X[labels == label]
-                dist_to_other_cluster = np.mean(cdist([point], other_cluster_points)[0])
-                b = min(b, dist_to_other_cluster)
+        unique_clusters = np.unique(labels[:,1])
 
-        # Silhouette score per il punto i
+        for h in range(np.size(unique_clusters)):
+            if unique_clusters[h] != cluster_label:
+                same_cluster_points = []
+                for z in range(X.shape[0]):
+                    if labels[z][1] == unique_clusters[h]:
+                        same_cluster_points.append(X[z])
+            a = np.mean(cdist([point], same_cluster_points)[0])
+            if a < b:
+                b = a
+
+        #Silhouette score per il punto i
         s = (b - a) / max(a, b) if max(a, b) != 0 else 0
         silhouette_scores.append(s)
 
-    # Silhouette score medio
+    #Silhouette score medio
     return np.mean(silhouette_scores)
 
 
