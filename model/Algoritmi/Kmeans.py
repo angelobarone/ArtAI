@@ -8,7 +8,6 @@ def kmeans(X, k, max_iter=100, tol=1e-4):
     #Genera k indici casuali unici tra 0 e len(X)-1
     random_indices = np.random.choice(len(X), k, replace=False)
     centroids = X[random_indices]
-
     #Variabile per tracciare la convergenza (valore precedente dei centroidi)
     prev_centroids = centroids.copy()
 
@@ -47,10 +46,11 @@ def kmeans(X, k, max_iter=100, tol=1e-4):
             new_centroids[j] = np.mean(cluster_points, axis=0)
 
         #Controlla la convergenza (se i centroidi non cambiano più)
-        #Valore di tolleranza impostato a 1x10^-4
+        #Condizione di terminazione
         if np.all(np.abs(new_centroids - prev_centroids) < tol):
-            print(f"Convergenza raggiunta dopo {i + 1} iterazioni.")
-            break
+           print(f"Convergenza raggiunta dopo {i + 1} iterazioni.")
+           break
+
         #np.abs calcola il valore assoluto della differenza
         #<tol restituisce true se la differenza tra i centroidi è inferiore a tol altrimente false
         #np.all verifica se tutti i valori nella matrice booleana sono true (se tutti i valori sono true vuol dire che i centroidi sono inferiori alla soglia di tolleranza)
