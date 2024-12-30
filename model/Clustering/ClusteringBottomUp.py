@@ -1,56 +1,57 @@
 import os
-import pickle
-
 import numpy as np
 from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import linkage, dendrogram
 from sklearn.cluster import AgglomerativeClustering
+from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
-from model.Evaluation.ElbowMethod import find_optimal_k
+from mpl_toolkits.mplot3d import Axes3D
+
+from model.Evaluation.show import show_dendrogram, show_clusters_3d
+from model.Evaluation.utils import get_centroids, get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
 preloaded_path_image_list = "preloaded\\image_list.npy"
-k = 0
 
 # carica il Dataset
 if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
     X = np.load(preloaded_path_X)
     image_list = np.load(preloaded_path_image_list)
-    k = find_optimal_k(X) #with open('k.pkl', 'rb') as file: k = pickle.load(file)
+
 else:
     X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
     np.save("preloaded\\X.npy", X)
     np.save("preloaded\\image_list.npy", image_list)
-    # Punto di gomito
-    k = find_optimal_k(X)
-    with open('k.pkl', 'wb') as file:
-        pickle.dump(k, file)
 
-#clustering bottomup
-clustering = AgglomerativeClustering(k, linkage = "complete")
+#visualizziamo il dendrogramma
+Z = linkage(X, method='ward')
+show_dendrogram(Z)
+
+#calcolo della distanza di taglio
+distances = Z[:, 2]
+diffs = np.diff(distances)
+max_diff_index = np.argmax(diffs)
+threshold = distances[max_diff_index]
+
+#clustering agglomerativo con sklearn
+clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=threshold)
 clustering.fit(X)
-original_labels = clustering.labels_
-#generazione dei cluster
-clusters = [[] for _ in range(clustering.n_clusters_)]
-for i in range(clustering.n_clusters_):
-    for h in range(np.size(original_labels)):
-        if original_labels[h] == i:
-            clusters[i].append(image_list[h])
+labels = clustering.labels_
+n_clusters = clustering.n_clusters_
+
+#generazione dei clusters
+clusters = get_clusters(n_clusters, labels, image_list)
 
 #calcolo dei centroidi
-centroids = np.zeros([clustering.n_clusters_, X.shape[1]])
-for h in range(clustering.n_clusters_):
-    somma = np.zeros(X.shape[1])
-    for z in range(np.size(clusters[h])):
-        image_name = clusters[h][z]
-        index = np.where(image_list == image_name)[0]
-        somma += X[index].reshape(-1)
-    centroids[h] = somma / np.size(clusters[h])
+centroids = get_centroids(n_clusters, clusters, image_list, X)
 
 #valutiamo la silhouette del clustering ottenuto
-#silhouette = calculate_silhouette_score(X, labels)
-silhouette = silhouette_score(X, original_labels)
+silhouette = silhouette_score(X, labels)
 print(silhouette)
+
+#Visualizziamo i Clusters in 3d
+show_clusters_3d(X, labels)
 
 with open("BottomUp\\resultTraining.txt", "w") as file:
     file.write(str(silhouette) + "\n")
@@ -58,20 +59,8 @@ with open("BottomUp\\resultTraining.txt", "w") as file:
         file.write(str(i) + ": " + str(clusters[i]))
 
 np.save("BottomUp\\centroidsBottomUp.npy", centroids)
-np.save("BottomUp\\labelsBottomUp.npy", original_labels)
+np.save("BottomUp\\labelsBottomUp.npy", labels)
 
 for i in range(len(clusters)):
     print(str(i) + ": " + str(clusters[i]))
 
-#Visualizziamo i Clusters
-plt.figure(figsize=(10, 10))
-for cluster_num in np.unique(original_labels):
-    # Punti del cluster
-    cluster_points = X[original_labels == cluster_num]
-    plt.scatter(cluster_points[:, 0], cluster_points[:, 1], label=f"Cluster {cluster_num}")
-
-plt.title("Visualizzazione dei Cluster Agglomerativi")
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.legend()
-plt.show()
