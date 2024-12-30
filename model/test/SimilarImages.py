@@ -1,52 +1,43 @@
-import joblib
 import numpy as np
+from model.Features.CNN import extract_features_CNNauto
 
-from model.test.PredictCluster import predict_cluster
-from model.preprocessing.combinedFeatures import extract_combined_features
+def get_similar_images(image_path, alg):
+    if alg == "kmeans":
+        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\centroidsKmeans.npy")
+        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\labelsKmeans.npy")
+    else:
+        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\centroidsBottomUp.npy")
+        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\labelsBottomUp.npy")
 
+    images_names = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\preloaded\\image_list.npy")
 
-def similarimages_set(result_test):
-    result_training = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\training\\resultTraining.npy")
+    new_features = extract_features_CNNauto(image_path)
+    c = 0
+    centroide = 0
+    min_dist = np.sqrt(np.sum((new_features - centroids[c]) ** 2))
+    for val in centroids:
+        distance = np.sqrt(np.sum((new_features - val) ** 2))
+        if distance < min_dist:
+            min_dist = distance
+            centroide = c
+        c+=1
 
-    final_result = []
+    cluster = []
+    h = 0
+    for i in range(np.size(labels)):
+        if labels[i] == centroide:
+            cluster.append(images_names[i])
 
-    for image in result_test:
-        cluster = image[1]
-        #filtriamo i dati di training estraendo solo quelli aderenti al cluster dell'immagine che stiamo analizzando
-        filtered_train = result_training[result_training[:, 1].astype(int) == cluster]
-        if filtered_train.shape[0] < 2:
-            similar_images = np.random.choice(filtered_train[:, 0], size=1, replace=False)
-        elif filtered_train.shape[0] < 3:
-            similar_images = np.random.choice(filtered_train[:, 0], size=2, replace=False)
-        elif filtered_train.shape[0] < 4:
-            similar_images = np.random.choice(filtered_train[:, 0], size=3, replace=False)
-        elif filtered_train.shape[0] < 5:
-            similar_images = np.random.choice(filtered_train[:,0], size=4, replace=False)
-        else:
-            similar_images = np.random.choice(filtered_train[:, 0], size=5, replace=False)
+    if np.size(cluster) < 5:
+        if np.size(cluster) < 4:
+            if np.size(cluster) < 3:
+                if np.size(cluster) < 2:
+                    h = 1
+                else: h = 2
+            else: h = 3
+        else: h = 4
+    else: h = 5
 
-        final_result.append([image[0], similar_images])
-
-    return final_result
-
-def similarimages_single(image):
-    result_training = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\training\\resultTraining.npy")
-
-    features = extract_combined_features(image)
-
-    # modifica della dimensionalità
-    pca_loaded = joblib.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\training\\trained\\pca_model.pkl")
-    features = pca_loaded.transform(features.reshape(1, -1))
-
-    # scaling
-    scaler_loaded = joblib.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\training\\trained\\scaler.pkl")
-    scaler = scaler_loaded.transform(features)
-
-    clusters = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\training\\preloaded\\centroids.npy")
-    closest_cluster = predict_cluster(features, clusters)
-    filtered_train = result_training[result_training[:, 1].astype(int) == closest_cluster]
-    similar_images = []
-    for i in range(5):
-        similar_images.append([int(np.random.choice(filtered_train[:, 0])), ])
-
+    similar_images = np.random.choice(cluster, size=h, replace=False)
     return similar_images
+
