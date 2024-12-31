@@ -23,11 +23,9 @@ else:
     np.save("preloaded\\X.npy", X)
     np.save("preloaded\\image_list.npy", image_list)
 
-scaler = StandardScaler()
-data_scaled = scaler.fit_transform(X)
 
-eps = 0.2       #Distanza massima tra due punti per essere considerati vicini
-min_samples = 5 #Minimo numero di punti per formare un cluster
+eps = 33       #Distanza massima tra due punti per essere considerati vicini
+min_samples = 2 #Minimo numero di punti per formare un cluster
 
 dbscan = DBSCAN(eps=eps, min_samples=min_samples)
 labels = dbscan.fit_predict(X)

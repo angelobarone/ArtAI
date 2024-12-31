@@ -9,13 +9,13 @@ from model.Evaluation.utils import get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
 preloaded_path_image_list = "preloaded\\image_list.npy"
-preloaded_path_elbowpoint = "preloaded\\elbowpoint.txt"
+preloaded_path_elbowpoint = "Kmeans\\elbowpoint.txt"
 
 # carica il Dataset
 if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
     X = np.load(preloaded_path_X)
     image_list = np.load(preloaded_path_image_list)
-    k = find_optimal_k(X, 200)
+    k = find_optimal_k(X, 150, 300)
     with open(preloaded_path_elbowpoint, "w") as f:
         f.write(str(k))
     #with open(preloaded_path_elbowpoint, "r") as f:
