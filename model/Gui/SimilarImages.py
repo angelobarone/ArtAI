@@ -5,18 +5,18 @@ from model.Features.CNN import extract_features_CNNauto
 
 def get_similar_images(image_path, alg):
     if alg == "kmeans":
-        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\centroidsKmeans.npy")
-        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\labelsKmeans.npy")
+        centroids = np.load("/model/Clustering/Kmeans/centroidsKmeans.npy")
+        labels = np.load("/model/Clustering/Kmeans/labelsKmeans.npy")
         print("dati kmeans caricati")
     elif alg == "bottomup":
-        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\centroidsBottomUp.npy")
-        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\labelsBottomUp.npy")
+        centroids = np.load("/model/Clustering/BottomUp/centroidsBottomUp.npy")
+        labels = np.load("/model/Clustering/BottomUp/labelsBottomUp.npy")
         print("dati bottomup caricati")
     else:
         centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\DBSCAN\\centroidsBottomUp.npy")
         labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\DBSCAN\\labelsBottomUp.npy")
         print("dati dbscan caricati")
-    images_names = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\preloaded\\image_list.npy")
+    images_names = np.load("/model/Clustering/preloaded/image_list.npy")
 
     new_features = extract_features_CNNauto(image_path)
     c = 0
