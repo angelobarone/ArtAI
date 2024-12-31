@@ -2,7 +2,7 @@ import os
 import cv2
 
 
-def image_loader_test(folder_path):
+def image_loader_MET_test(folder_path):
     images = []
 
     for file_name in os.listdir(folder_path):

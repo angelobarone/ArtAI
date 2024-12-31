@@ -6,7 +6,7 @@ from sklearn.metrics import silhouette_score
 from tqdm import tqdm
 
 
-def find_optimal_k(X, max_k=10):
+def find_optimal_k(X, max_k):
     sse = []
 
     for k in tqdm(range(1, max_k + 1), desc="Elbow method calculating"):

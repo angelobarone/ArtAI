@@ -9,21 +9,24 @@ from model.Evaluation.utils import get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
 preloaded_path_image_list = "preloaded\\image_list.npy"
-preloaded_path_elbowpoint = "preloaded\\elbowpoint.npy"
+preloaded_path_elbowpoint = "preloaded\\elbowpoint.txt"
 
 # carica il Dataset
-if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list) and os.path.exists(preloaded_path_elbowpoint):
+if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
     X = np.load(preloaded_path_X)
     image_list = np.load(preloaded_path_image_list)
-    with open(preloaded_path_elbowpoint, "r") as f:
-        k = int(f.read())
+    k = find_optimal_k(X, 200)
+    with open(preloaded_path_elbowpoint, "w") as f:
+        f.write(str(k))
+    #with open(preloaded_path_elbowpoint, "r") as f:
+    #    k = int(f.read())
 else:
-    X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed", 1700, "mixed")#841587
-    np.save("preloaded\\X.npy", X)
-    np.save("preloaded\\image_list.npy", image_list)
+    X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
+    np.save(preloaded_path_X, X)
+    np.save(preloaded_path_image_list, image_list)
     # Punto di gomito
     k = find_optimal_k(X, "kmeans")
-    with open("preloaded\\elbowpoint.txt", "w") as f:
+    with open(preloaded_path_elbowpoint, "w") as f:
         f.write(str(k))
 
 #Eseguiamo il clustering k-means su k cluster

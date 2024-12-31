@@ -1,44 +1,45 @@
 import os
 import numpy as np
-from matplotlib import pyplot as plt
-from scipy.cluster.hierarchy import linkage, dendrogram
+from scipy.cluster.hierarchy import linkage
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
-from mpl_toolkits.mplot3d import Axes3D
-
+from model.Evaluation.Silhouette import find_optimal_silhouette
 from model.Evaluation.show import show_dendrogram, show_clusters_3d
 from model.Evaluation.utils import get_centroids, get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
 preloaded_path_image_list = "preloaded\\image_list.npy"
+preloaded_path_dendrogram = "BottomUp\\dendrogram.npy"
+preloaded_path_silhouette = "BottomUp\\silhouette.txt"
 
 # carica il Dataset
-if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
+if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list) and os.path.exists(preloaded_path_dendrogram) and os.path.exists(preloaded_path_silhouette):
     X = np.load(preloaded_path_X)
     image_list = np.load(preloaded_path_image_list)
-
+    Z = np.load(preloaded_path_dendrogram)
+    with open(preloaded_path_silhouette, "r") as f:
+        k = int(f.read())
 else:
     X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
-    np.save("preloaded\\X.npy", X)
-    np.save("preloaded\\image_list.npy", image_list)
+    Z = linkage(X, method='ward')
+    k = find_optimal_silhouette(X, 190, 300)
+    np.save(preloaded_path_X, X)
+    np.save(preloaded_path_image_list, image_list)
+    np.save(preloaded_path_dendrogram, Z)
+    with open(preloaded_path_silhouette, "w") as f:
+        f.write(str(k))
 
 #visualizziamo il dendrogramma
-Z = linkage(X, method='ward')
 show_dendrogram(Z)
 
-#calcolo della distanza di taglio
-distances = Z[:, 2]
-diffs = np.diff(distances)
-max_diff_index = np.argmax(diffs)
-threshold = distances[max_diff_index]
-
 #clustering agglomerativo con sklearn
-clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=threshold)
+clustering = AgglomerativeClustering(n_clusters = k, linkage = "ward", metric="euclidean", memory="..\\tmp\\cache")
 clustering.fit(X)
 labels = clustering.labels_
 n_clusters = clustering.n_clusters_
+print(n_clusters)
 
 #generazione dei clusters
 clusters = get_clusters(n_clusters, labels, image_list)

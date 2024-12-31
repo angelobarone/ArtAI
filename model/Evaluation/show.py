@@ -32,7 +32,7 @@ def show_clusters_2d(X, labels):
     plt.show()
 
 def show_dendrogram(linkage):
-    plt.figure(figsize=(10, 7))
+    plt.figure(figsize=(40, 10))
     dendrogram(linkage)
     plt.title("Dendrogramma del Clustering Gerarchico")
     plt.xlabel("Indice dei campioni")

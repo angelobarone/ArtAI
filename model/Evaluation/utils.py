@@ -19,3 +19,5 @@ def get_centroids(n_clusters, clusters, image_list, X):
             index = np.where(image_list == image_name)[0]
             somma += X[index].reshape(-1)
         centroids[h] = somma / np.size(clusters[h])
+
+    return centroids

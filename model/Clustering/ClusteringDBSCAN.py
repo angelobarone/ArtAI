@@ -2,7 +2,9 @@ import os
 
 import numpy as np
 from sklearn.cluster import DBSCAN
+from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
 
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.show import show_clusters_3d
@@ -21,12 +23,16 @@ else:
     np.save("preloaded\\X.npy", X)
     np.save("preloaded\\image_list.npy", image_list)
 
+scaler = StandardScaler()
+data_scaled = scaler.fit_transform(X)
+
 eps = 0.2       #Distanza massima tra due punti per essere considerati vicini
 min_samples = 5 #Minimo numero di punti per formare un cluster
 
 dbscan = DBSCAN(eps=eps, min_samples=min_samples)
 labels = dbscan.fit_predict(X)
 n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
+print(n_clusters)
 
 #generazione dei clusters
 clusters = get_clusters(n_clusters, labels, image_list)

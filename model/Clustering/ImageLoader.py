@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import logging
 from PIL import Image
+from sklearn.decomposition import PCA
 from tqdm import tqdm
 
 from model.Features.CNN import extract_features_CNNauto
@@ -35,7 +36,7 @@ def load_dataset_from_folder(folder_path, n, tipo):
     #Converti la lista in un array NumPy
     X = np.vstack(features_list)
 
-    return X, image_list
+    return reduced_X, image_list
 
 
 def image_loader_MET(i, folder_path):
