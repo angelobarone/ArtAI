@@ -4,6 +4,7 @@ from tkinter import ttk
 from PIL import Image, ImageTk
 from model.test.SimilarImages import get_similar_images
 
+alg = "kmeans"
 file_path_global = None
 error_label = None
 
@@ -39,22 +40,44 @@ def load_similar_images():
     else:
         if error_label is not None:
             error_label.destroy()
-        similar_images = get_similar_images(file_path_global, "bottomup")
+        similar_images = get_similar_images(file_path_global, alg)
 
     if similar_images is not None:
-        i = 0
+        h = 0
         for img_name in similar_images:
             img_path = "F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed\\" + str(img_name)
             img = Image.open(img_path).resize((200, 200))
             img_tk = ImageTk.PhotoImage(img)
-            output_labels[i].configure(image=img_tk)
-            output_labels[i].image = img_tk
-            i += 1
+            output_labels[h].configure(image=img_tk)
+            output_labels[h].image = img_tk
+            h += 1
+
+def set_kmeans():
+    global alg
+    alg = "kmeans"
+
+def set_bottomup():
+    global alg
+    alg = "bottomup"
+
+def set_hdbscan():
+    global alg
+    alg = "dbscan"
 
 # Configurazione della finestra principale
 root = tk.Tk()
 root.title("ArtAi")
 root.geometry("1400x300")
+
+menu_bar = tk.Menu(root)
+menu_opzioni = tk.Menu(menu_bar, tearoff=0)
+menu_opzioni.add_command(label="Kmeans", command=set_kmeans)
+menu_opzioni.add_command(label="Bottomup", command=set_bottomup)
+menu_opzioni.add_command(label="DBSCAN", command=set_hdbscan)
+
+menu_bar.add_cascade(label="Algoritmo", menu=menu_opzioni)
+
+root.config(menu=menu_bar)
 
 # Etichetta e pulsante per l'immagine di input
 ttk.Label(root, text="Carica un'immagine:").grid(row=0, column=0, padx=10, pady=10)
