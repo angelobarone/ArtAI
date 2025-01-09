@@ -2,11 +2,12 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import Image, ImageTk
-from model.Gui.SimilarImages import get_similar_images
+from model.Application.SimilarImages import get_similar_images
 
 alg = "kmeans"
 file_path_global = None
 error_label = None
+results = [None, None]
 
 def upload_image():
     global file_path_global
@@ -33,6 +34,7 @@ def upload_image():
 def load_similar_images():
     global file_path_global
     global error_label
+    global results
     similar_images = None
     if file_path_global is None:
         error_label = ttk.Label(root, text = "Caricare prima un'immagine")
@@ -40,7 +42,7 @@ def load_similar_images():
     else:
         if error_label is not None:
             error_label.destroy()
-        similar_images = get_similar_images(file_path_global, alg)
+        similar_images, results = get_similar_images(file_path_global, alg)
 
     if similar_images is not None:
         h = 0
@@ -51,6 +53,25 @@ def load_similar_images():
             output_labels[h].configure(image=img_tk)
             output_labels[h].image = img_tk
             h += 1
+
+def estrai_precisione():
+    global results
+    popup = tk.Toplevel(root)
+    popup.title("Precisione del clustering")
+    popup.geometry("300x200")
+
+    label3 = tk.Label(popup, text="Algoritmo: " + str(alg))
+    label3.pack(pady=10)
+
+    label1 = tk.Label(popup, text="Shiluette score: "+str(results[0]))
+    label1.pack(pady=10)
+
+    label2 = tk.Label(popup, text="Davies-Bouldin score: "+str(results[1]))
+    label2.pack(pady=10)
+
+    close_button = tk.Button(popup, text="Chiudi", command=popup.destroy)
+    close_button.pack(pady=10)
+
 
 def set_kmeans():
     global alg
@@ -70,12 +91,16 @@ root.title("ArtAi")
 root.geometry("1400x300")
 
 menu_bar = tk.Menu(root)
-menu_opzioni = tk.Menu(menu_bar, tearoff=0)
-menu_opzioni.add_command(label="Kmeans", command=set_kmeans)
-menu_opzioni.add_command(label="Bottomup", command=set_bottomup)
-menu_opzioni.add_command(label="DBSCAN", command=set_hdbscan)
+menu_algoritmi = tk.Menu(menu_bar, tearoff=0)
+menu_algoritmi.add_command(label="Kmeans", command=set_kmeans)
+menu_algoritmi.add_command(label="Bottomup", command=set_bottomup)
+menu_algoritmi.add_command(label="DBSCAN", command=set_hdbscan)
 
-menu_bar.add_cascade(label="Algoritmo", menu=menu_opzioni)
+menu_valutazione = tk.Menu(menu_bar, tearoff=0)
+menu_valutazione.add_command(label="Precisione", command=estrai_precisione)
+
+menu_bar.add_cascade(label="Algoritmo", menu=menu_algoritmi)
+menu_bar.add_cascade(label="Valutazione", menu=menu_valutazione)
 
 root.config(menu=menu_bar)
 

@@ -3,7 +3,7 @@ import numpy as np
 from scipy.cluster.hierarchy import linkage
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.Silhouette import find_optimal_silhouette
 from model.Evaluation.show import show_dendrogram, show_clusters_3d
@@ -12,7 +12,7 @@ from model.Evaluation.utils import get_centroids, get_clusters
 preloaded_path_X = "preloaded\\X.npy"
 preloaded_path_image_list = "preloaded\\image_list.npy"
 preloaded_path_dendrogram = "BottomUp\\dendrogram.npy"
-preloaded_path_silhouette = "BottomUp\\silhouette.txt"
+preloaded_path_silhouette = "BottomUp\\optimal_k_on_silhouette.txt"
 
 # carica il Dataset
 if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list) and os.path.exists(preloaded_path_dendrogram) and os.path.exists(preloaded_path_silhouette):
@@ -47,20 +47,27 @@ clusters = get_clusters(n_clusters, labels, image_list)
 #calcolo dei centroidi
 centroids = get_centroids(n_clusters, clusters, image_list, X)
 
-#valutiamo la silhouette del clustering ottenuto
+#valutiamo quanto gli elementi siano nel cluster corretto con la silhouette
 silhouette = silhouette_score(X, labels)
 print(silhouette)
+
+#valutiamo la compattezza e separabilità dei cluster
+dbi = davies_bouldin_score(X, labels)
+print(dbi)
+
+results = [silhouette, dbi]
 
 #Visualizziamo i Clusters in 3d
 show_clusters_3d(X, labels)
 
-with open("BottomUp\\resultTraining.txt", "w") as file:
-    file.write(str(silhouette) + "\n")
+
+with open("BottomUp\\clusters.txt", "w") as file:
     for i in range(len(clusters)):
         file.write(str(i) + ": " + str(clusters[i]))
 
 np.save("BottomUp\\centroidsBottomUp.npy", centroids)
 np.save("BottomUp\\labelsBottomUp.npy", labels)
+np.save("BottomUp\\resultsBottomUp.npy", results)
 
 for i in range(len(clusters)):
     print(str(i) + ": " + str(clusters[i]))

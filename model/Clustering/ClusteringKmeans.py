@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
 from model.Algoritmi import Kmeans
 from model.Evaluation.ElbowMethod import find_optimal_k
 from model.Clustering.ImageLoader import load_dataset_from_folder
@@ -15,17 +15,14 @@ preloaded_path_elbowpoint = "Kmeans\\elbowpoint.txt"
 if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
     X = np.load(preloaded_path_X)
     image_list = np.load(preloaded_path_image_list)
-    k = find_optimal_k(X, 150, 300)
-    with open(preloaded_path_elbowpoint, "w") as f:
-        f.write(str(k))
-    #with open(preloaded_path_elbowpoint, "r") as f:
-    #    k = int(f.read())
+    with open(preloaded_path_elbowpoint, "r") as f:
+        k = int(f.read())
 else:
     X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
     np.save(preloaded_path_X, X)
     np.save(preloaded_path_image_list, image_list)
     # Punto di gomito
-    k = find_optimal_k(X, "kmeans")
+    k = find_optimal_k(X, 150, 300)
     with open(preloaded_path_elbowpoint, "w") as f:
         f.write(str(k))
 
@@ -39,6 +36,12 @@ clusters = get_clusters(n_clusters, labels, image_list)
 #valutiamo la silhouette del clustering ottenuto
 silhouette = silhouette_score(X, labels)
 print(silhouette)
+
+#valutiamo la compattezza e separabilità dei cluster
+dbi = davies_bouldin_score(X, labels)
+print(dbi)
+
+results = [silhouette, dbi]
 
 #salviamo i risultati
 result = []
@@ -54,6 +57,7 @@ with open("Kmeans\\resultTraining.txt", "w") as file:
 
 np.save("Kmeans\\centroidsKmeans.npy", centroids)
 np.save("Kmeans\\labelsKmeans.npy", labels)
+np.save("Kmeans\\resultsKmeans.npy", results)
 
 for i in range(len(clusters)):
   print(str(i) + ": " + str(clusters[i]))

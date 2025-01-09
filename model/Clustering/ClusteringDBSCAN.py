@@ -3,7 +3,7 @@ import os
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.decomposition import PCA
-from sklearn.metrics import silhouette_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score
 from sklearn.preprocessing import StandardScaler
 
 from model.Clustering.ImageLoader import load_dataset_from_folder
@@ -42,6 +42,12 @@ centroids = get_centroids(n_clusters, clusters, image_list, X)
 silhouette = silhouette_score(X, labels)
 print(silhouette)
 
+#valutiamo la compattezza e separabilità dei cluster
+dbi = davies_bouldin_score(X, labels)
+print(dbi)
+
+results = [silhouette, dbi]
+
 #Visualizziamo i Clusters in 3d
 show_clusters_3d(X, labels)
 
@@ -50,8 +56,9 @@ with open("DBSCAN\\resultTraining.txt", "w") as file:
     for i in range(len(clusters)):
         file.write(str(i) + ": " + str(clusters[i]))
 
-np.save("DBSCAN\\centroidsBottomUp.npy", centroids)
-np.save("DBSCAN\\labelsBottomUp.npy", labels)
+np.save("DBSCAN\\centroidsDBSCAN.npy", centroids)
+np.save("DBSCAN\\labelsDBSCAN.npy", labels)
+np.save("DBSCAN\\resultsDBSCAN.npy", results)
 
 for i in range(len(clusters)):
     print(str(i) + ": " + str(clusters[i]))
