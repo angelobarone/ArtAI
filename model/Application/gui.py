@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import Image, ImageTk
-from model.Gui.SimilarImages import get_similar_images
+from model.Application.SimilarImages import get_similar_images
 
 alg = "kmeans"
 file_path_global = None
