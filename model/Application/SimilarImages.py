@@ -1,4 +1,5 @@
 import numpy as np
+from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
 from model.Features.CNN import extract_features_CNNauto
@@ -6,25 +7,32 @@ from model.Features.CNN import extract_features_CNNauto
 def get_similar_images(image_path, alg):
     results = None
     if alg == "kmeans":
-        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\centroidsKmeans.npy")
-        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\labelsKmeans.npy")
-        results = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\Kmeans\\resultsKmeans.npy")
+        centroids = np.load("..\\Clustering\\Kmeans\\centroidsKmeans.npy")
+        labels = np.load("..\\Clustering\\Kmeans\\labelsKmeans.npy")
+        results = np.load("..\\Clustering\\Kmeans\\resultsKmeans.npy")
         print("dati kmeans caricati")
     elif alg == "bottomup":
-        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\centroidsBottomUp.npy")
-        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\labelsBottomUp.npy")
-        results = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\BottomUp\\resultsBottomUp.npy")
+        centroids = np.load("..\\Clustering\\BottomUp\\centroids.npy")
+        labels = np.load("..\\Clustering\\BottomUp\\labelsBottomUp.npy")
+        results = np.load("..\\Clustering\\BottomUp\\resultsBottomUp.npy")
         print("dati bottomup caricati")
     else:
-        centroids = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\DBSCAN\\centroidsDBSCAN.npy")
-        labels = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\DBSCAN\\labelsDBSCAN.npy")
-        results = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\DBSCAN\\resultsDBSCAN.npy")
+        centroids = np.load("..\\Clustering\\DBSCAN\\centroidsDBSCAN.npy")
+        labels = np.load("..\\Clustering\\DBSCAN\\labelsDBSCAN.npy")
+        results = np.load("..\\Clustering\\DBSCAN\\resultsDBSCAN.npy")
         print("dati dbscan caricati")
 
-    images_names = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\preloaded\\image_list.npy")
-    X = np.load("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Clustering\\preloaded\\X.npy")
+    images_names = np.load("..\\Clustering\\preloaded\\image_list.npy")
+    X = np.load("..\\Clustering\\preloaded\\X.npy")
 
     new_features = extract_features_CNNauto(image_path)
+
+    plt.bar(range(len(new_features)), new_features)
+    plt.title('Bar Plot delle Feature')
+    plt.xlabel('Indice')
+    plt.ylabel('Valore della Feature')
+    plt.show()
+
     c = 0
     centroide = 0
     min_dist = np.sqrt(np.sum((new_features - centroids[c]) ** 2))

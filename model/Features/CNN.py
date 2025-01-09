@@ -20,7 +20,7 @@ def extract_features_CNNauto(image_path):
         return features.flatten()
     except Exception as e:
         print(e)
-        image = load_img("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\model\\Gui\\line-drawing-of-an-empty-square-frame-on-a-white_534611_wh860.png", target_size=(224, 224))
+        image = load_img("..\\Application\\line-drawing-of-an-empty-square-frame-on-a-white_534611_wh860.png", target_size=(224, 224))
         image = img_to_array(image)
         image = np.expand_dims(image, axis=0)
         image = preprocess_input(image)

@@ -8,27 +8,19 @@ from tqdm import tqdm
 
 from model.Features.CNN import extract_features_CNNauto
 
-def load_dataset_from_folder(folder_path, n, tipo):
+def load_dataset_from_folder(folder_path):
     features_list = []
     image_list = []
+    #estraggo il numero di immagini nella cartella specificata
+    n = len([f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))])
     with open("log.txt", "w") as log:
-        # il valore n indica quante immagini includere nel caricamento
         for i in tqdm(range(n), desc="Loading dataset"):
-            image_path = None
-            if tipo == "MET":
-                image_path = image_path_MET(i, folder_path)
-            else:
-                image_path = image_path_mixed(i, folder_path)
+            image_path = image_path_mixed(i, folder_path)
             if image_path is not None and is_image_valid(image_path):
-                if tipo == "MET":
-                    image_list.append(i)
-                else:
-                    image_name = os.path.basename(image_path)
-                    image_list.append(image_name)
-                    log.write("Image: " + str(image_name) + " loaded" +"\n")
-
-                # features_extractor = keras.models.load_model("../Features/Trained/CNN_features_extractor.keras")
-                features = extract_features_CNNauto(image_path)  # CNN.extract_features(image_path, features_extractor)
+                image_name = os.path.basename(image_path)
+                image_list.append(image_name)
+                log.write("Image: " + str(image_name) + " loaded" +"\n")
+                features = extract_features_CNNauto(image_path)
                 features_list.append(features)
             else:
                 log.write("Image" + str(image_path) + " not loaded" + "\n")
@@ -36,7 +28,7 @@ def load_dataset_from_folder(folder_path, n, tipo):
     #Converti la lista in un array NumPy
     X = np.vstack(features_list)
 
-    return reduced_X, image_list
+    return X, image_list
 
 
 def image_loader_MET(i, folder_path):

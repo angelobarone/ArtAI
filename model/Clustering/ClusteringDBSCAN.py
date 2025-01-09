@@ -19,7 +19,7 @@ if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list
     image_list = np.load(preloaded_path_image_list)
 
 else:
-    X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
+    X, image_list = load_dataset_from_folder("..\\..\\dataset\\01.mixed")
     np.save("preloaded\\X.npy", X)
     np.save("preloaded\\image_list.npy", image_list)
 

@@ -47,7 +47,7 @@ def load_similar_images():
     if similar_images is not None:
         h = 0
         for img_name in similar_images:
-            img_path = "F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed\\" + str(img_name)
+            img_path = "..\\..\\dataset\\01.mixed\\" + str(img_name)
             img = Image.open(img_path).resize((200, 200))
             img_tk = ImageTk.PhotoImage(img)
             output_labels[h].configure(image=img_tk)

@@ -22,7 +22,7 @@ if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list
     with open(preloaded_path_silhouette, "r") as f:
         k = int(f.read())
 else:
-    X, image_list = load_dataset_from_folder("F:\\universit\\A.A.2024.2025\\FIA\\ArtAIPy\\dataset\\dataset2\\01.mixed",13967 , "mixed")
+    X, image_list = load_dataset_from_folder("..\\..\\dataset\\01.mixed")
     Z = linkage(X, method='ward')
     k = find_optimal_silhouette(X, 190, 300)
     np.save(preloaded_path_X, X)
