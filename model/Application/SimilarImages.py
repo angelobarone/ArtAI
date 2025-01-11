@@ -1,10 +1,11 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from numpy.f2py.auxfuncs import throw_error
 from sklearn.decomposition import PCA
 
 from model.Features.CNN import extract_features_CNNauto
 
-def get_similar_images(image_path, alg):
+def get_similar_images(image_path, alg, n):
     results = None
     if alg == "kmeans":
         centroids = np.load("..\\Clustering\\Kmeans\\centroidsKmeans.npy")
@@ -12,15 +13,17 @@ def get_similar_images(image_path, alg):
         results = np.load("..\\Clustering\\Kmeans\\resultsKmeans.npy")
         print("dati kmeans caricati")
     elif alg == "bottomup":
-        centroids = np.load("..\\Clustering\\BottomUp\\centroids.npy")
+        centroids = np.load("..\\Clustering\\BottomUp\\centroidsBottomUp.npy")
         labels = np.load("..\\Clustering\\BottomUp\\labelsBottomUp.npy")
         results = np.load("..\\Clustering\\BottomUp\\resultsBottomUp.npy")
         print("dati bottomup caricati")
-    else:
+    elif alg == "dbscan":
         centroids = np.load("..\\Clustering\\DBSCAN\\centroidsDBSCAN.npy")
         labels = np.load("..\\Clustering\\DBSCAN\\labelsDBSCAN.npy")
         results = np.load("..\\Clustering\\DBSCAN\\resultsDBSCAN.npy")
         print("dati dbscan caricati")
+    else:
+        raise ValueError("alg non valida, i valori consentiti sono: kmeans, bottomup, dbscan")
 
     images_names = np.load("..\\Clustering\\preloaded\\image_list.npy")
     X = np.load("..\\Clustering\\preloaded\\X.npy")
@@ -48,15 +51,10 @@ def get_similar_images(image_path, alg):
         if labels[i] == centroide:
             cluster.append([images_names[i], np.abs(X[i] - new_features)])
 
-    if len(cluster) < 5:
-        if len(cluster) < 4:
-            if len(cluster) < 3:
-                if len(cluster) < 2:
-                    h = 1
-                else: h = 2
-            else: h = 3
-        else: h = 4
-    else: h = 5
+    if len(cluster) < n:
+        h = len(cluster)
+    else:
+        h = n
 
     #Estrazione delle immagini più simili all'input
     sorted_cluster = sorted(cluster, key=lambda c: np.linalg.norm(c[1]))

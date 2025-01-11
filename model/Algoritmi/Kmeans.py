@@ -1,4 +1,9 @@
+import time
+
 import numpy as np
+import psutil
+from matplotlib import pyplot as plt
+
 
 def kmeans(X, k, max_iter=100, tol=1e-4):
 
@@ -25,6 +30,7 @@ def kmeans(X, k, max_iter=100, tol=1e-4):
             min_distance = float('inf')  # Impostiamo una distanza infinita come valore di partenza
             closest_centroid = -1  # Indice del centroide più vicino
             for j in range(n_centroids):
+
                 #Distanza euclidea tra il punto (X[i]) e il centroide (centroids[j])
                 distance = np.sqrt(np.sum((X[h] - centroids[j]) ** 2))
                 #Distanza minore
@@ -39,6 +45,7 @@ def kmeans(X, k, max_iter=100, tol=1e-4):
         #Inizializzazione di un array vuoto per i nuovi centroidi
         new_centroids = np.zeros((k, X.shape[1]))
         for j in range(k):  # Per ogni cluster
+
             #Punti appartenenti al cluster j
             cluster_points = X[labels == j]
 
@@ -56,5 +63,6 @@ def kmeans(X, k, max_iter=100, tol=1e-4):
         #np.all verifica se tutti i valori nella matrice booleana sono true (se tutti i valori sono true vuol dire che i centroidi sono inferiori alla soglia di tolleranza)
         #Aggiorna i centroidi
         prev_centroids = new_centroids
+
 
     return new_centroids, labels

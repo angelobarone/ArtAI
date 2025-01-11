@@ -2,7 +2,6 @@ import os
 import numpy as np
 from scipy.cluster.hierarchy import linkage
 from sklearn.cluster import AgglomerativeClustering
-from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.Silhouette import find_optimal_silhouette

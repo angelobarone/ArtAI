@@ -1,6 +1,8 @@
 import os
+import time
+
 import numpy as np
-from sklearn.metrics import silhouette_score, davies_bouldin_score, calinski_harabasz_score
+from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Algoritmi import Kmeans
 from model.Evaluation.ElbowMethod import find_optimal_k
 from model.Clustering.ImageLoader import load_dataset_from_folder

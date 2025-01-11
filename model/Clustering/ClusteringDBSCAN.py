@@ -2,9 +2,7 @@ import os
 
 import numpy as np
 from sklearn.cluster import DBSCAN
-from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score, davies_bouldin_score
-from sklearn.preprocessing import StandardScaler
 
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.show import show_clusters_3d
