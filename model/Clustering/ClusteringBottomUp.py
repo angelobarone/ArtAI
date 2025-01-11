@@ -1,11 +1,13 @@
 import os
+import time
+
 import numpy as np
 from scipy.cluster.hierarchy import linkage
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.Silhouette import find_optimal_silhouette
-from model.Evaluation.show import show_dendrogram, show_clusters_3d
+from model.Evaluation.show import show_dendrogram, show_clusters_3d, show_clusters_2d
 from model.Evaluation.utils import get_centroids, get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
@@ -33,6 +35,7 @@ else:
 #visualizziamo il dendrogramma
 show_dendrogram(Z)
 
+start = time.time()
 #clustering agglomerativo con sklearn
 clustering = AgglomerativeClustering(n_clusters = k, linkage = "ward", metric="euclidean", memory="..\\tmp\\cache")
 clustering.fit(X)
@@ -46,6 +49,11 @@ clusters = get_clusters(n_clusters, labels, image_list)
 #calcolo dei centroidi
 centroids = get_centroids(n_clusters, clusters, image_list, X)
 
+end = time.time()
+tempo_impiegato = end - start
+print("Tempo impiegato: " + str(tempo_impiegato))
+
+start = time.time()
 #valutiamo quanto gli elementi siano nel cluster corretto con la silhouette
 silhouette = silhouette_score(X, labels)
 print(silhouette)
@@ -58,6 +66,7 @@ results = [silhouette, dbi]
 
 #Visualizziamo i Clusters in 3d
 show_clusters_3d(X, labels)
+show_clusters_2d(X, labels)
 
 
 with open("BottomUp\\clusters.txt", "w") as file:
@@ -71,3 +80,6 @@ np.save("BottomUp\\resultsBottomUp.npy", results)
 for i in range(len(clusters)):
     print(str(i) + ": " + str(clusters[i]))
 
+end = time.time()
+tempo_impiegato = end - start
+print("Tempo impiegato: " + str(tempo_impiegato))

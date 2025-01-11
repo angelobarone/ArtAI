@@ -28,7 +28,7 @@ def show_clusters_2d(X, labels):
     plt.title("Visualizzazione dei Cluster Agglomerativi")
     plt.xlabel("Feature 1")
     plt.ylabel("Feature 2")
-    plt.legend()
+    #plt.legend()
     plt.show()
 
 def show_dendrogram(linkage):

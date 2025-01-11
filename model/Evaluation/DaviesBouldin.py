@@ -5,11 +5,9 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 from tqdm import tqdm
 
-def find_optimal_silhouette(X, min_k, max_k):
-    silhouette = []
 
-    #pca = PCA(n_components=3)
-    #X = pca.fit_transform(X)
+def find_optimal_davies(X, min_k, max_k):
+    davies = []
 
     for k in tqdm(range(min_k, max_k + 1), desc="Silhouette Calculating"):
         clustering = AgglomerativeClustering(n_clusters=k, linkage = "ward", memory="..\\tmp\\cache")

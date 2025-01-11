@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 from matplotlib import pyplot as plt
 from numpy.f2py.auxfuncs import throw_error
@@ -7,6 +9,7 @@ from model.Features.CNN import extract_features_CNNauto
 
 def get_similar_images(image_path, alg, n):
     results = None
+    start = time.time()
     if alg == "kmeans":
         centroids = np.load("..\\Clustering\\Kmeans\\centroidsKmeans.npy")
         labels = np.load("..\\Clustering\\Kmeans\\labelsKmeans.npy")
@@ -30,11 +33,11 @@ def get_similar_images(image_path, alg, n):
 
     new_features = extract_features_CNNauto(image_path)
 
-    plt.bar(range(len(new_features)), new_features)
-    plt.title('Bar Plot delle Feature')
-    plt.xlabel('Indice')
-    plt.ylabel('Valore della Feature')
-    plt.show()
+    #plt.bar(range(len(new_features)), new_features)
+    #plt.title('Bar Plot delle Feature')
+    #plt.xlabel('Indice')
+    #plt.ylabel('Valore della Feature')
+    #plt.show()
 
     c = 0
     centroide = 0
@@ -59,6 +62,9 @@ def get_similar_images(image_path, alg, n):
     #Estrazione delle immagini più simili all'input
     sorted_cluster = sorted(cluster, key=lambda c: np.linalg.norm(c[1]))
     similar_images = [row[0] for row in sorted_cluster[:h]]
+    end = time.time()
+    research_time = end - start
+    results = np.append(results, research_time)
     #Nel caso di estrazione casuale
     #similar_images = np.random.choice(cluster, size=h, replace=False)
     return similar_images, results

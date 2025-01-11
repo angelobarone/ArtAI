@@ -6,7 +6,7 @@ from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Algoritmi import Kmeans
 from model.Evaluation.ElbowMethod import find_optimal_k
 from model.Clustering.ImageLoader import load_dataset_from_folder
-from model.Evaluation.show import show_clusters_3d
+from model.Evaluation.show import show_clusters_3d, show_clusters_2d
 from model.Evaluation.utils import get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
@@ -28,12 +28,14 @@ else:
     with open(preloaded_path_elbowpoint, "w") as f:
         f.write(str(k))
 
+
 #Eseguiamo il clustering k-means su k cluster
 centroids, labels = Kmeans.kmeans(X, k)
 n_clusters = len(centroids)
 
 #calcolo i cluster
 clusters = get_clusters(n_clusters, labels, image_list)
+
 
 #valutiamo la silhouette del clustering ottenuto
 silhouette = silhouette_score(X, labels)
@@ -66,3 +68,4 @@ for i in range(len(clusters)):
 
 #Visualizziamo i Clusters
 show_clusters_3d(X, labels)
+show_clusters_2d(X, labels)

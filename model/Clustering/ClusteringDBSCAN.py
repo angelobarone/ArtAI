@@ -1,4 +1,5 @@
 import os
+import time
 
 import numpy as np
 from sklearn.cluster import DBSCAN
@@ -22,9 +23,10 @@ else:
     np.save("preloaded\\image_list.npy", image_list)
 
 
-eps = 33       #Distanza massima tra due punti per essere considerati vicini
-min_samples = 2 #Minimo numero di punti per formare un cluster
+eps = 52.12     #Distanza massima tra due punti per essere considerati vicini
+min_samples = 50 #Minimo numero di punti per formare un cluster
 
+start = time.time()
 dbscan = DBSCAN(eps=eps, min_samples=min_samples)
 labels = dbscan.fit_predict(X)
 n_clusters = len(set(labels)) - (1 if -1 in labels else 0)
@@ -35,6 +37,10 @@ clusters = get_clusters(n_clusters, labels, image_list)
 
 #calcolo dei centroidi
 centroids = get_centroids(n_clusters, clusters, image_list, X)
+
+end = time.time()
+tempo_impiegato = end - start
+print("Tempo impiegato: " + str(tempo_impiegato))
 
 #valutiamo la silhouette del clustering ottenuto
 silhouette = silhouette_score(X, labels)
