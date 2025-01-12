@@ -38,3 +38,15 @@ def show_dendrogram(linkage):
     plt.xlabel("Indice dei campioni")
     plt.ylabel("Distanza")
     plt.show()
+
+def show_centroids_2d(X):
+    pca = PCA(n_components=2)
+    centroids = pca.fit_transform(X)
+    plt.figure(figsize=(8, 6))
+    plt.scatter(centroids[:, 0], centroids[:, 1], c='red', marker='o', s=100, label='Centroidi')
+    plt.title('Visualizzazione dei Centroidi')
+    plt.xlabel('Dimensione 1')
+    plt.ylabel('Dimensione 2')
+    plt.grid(True)
+    plt.legend()
+    plt.show()

@@ -7,7 +7,7 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score, davies_bouldin_score
 from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.Silhouette import find_optimal_silhouette
-from model.Evaluation.show import show_dendrogram, show_clusters_3d, show_clusters_2d
+from model.Evaluation.show import show_dendrogram, show_clusters_3d, show_clusters_2d, show_centroids_2d
 from model.Evaluation.utils import get_centroids, get_clusters
 
 preloaded_path_X = "preloaded\\X.npy"
@@ -66,7 +66,7 @@ results = [silhouette, dbi]
 
 #Visualizziamo i Clusters in 3d
 show_clusters_3d(X, labels)
-show_clusters_2d(X, labels)
+show_centroids_2d(centroids)
 
 
 with open("BottomUp\\clusters.txt", "w") as file:
