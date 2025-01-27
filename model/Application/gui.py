@@ -16,6 +16,7 @@ output_labels = []
 input_image_label = None
 root = None
 dataset = "..\\..\\dataset\\01.mixed\\"
+csv_filepath = "../../dataset/WikiArt.csv"
 
 def upload_image():
     global file_path_global
@@ -50,7 +51,7 @@ def load_similar_images():
     else:
         if error_label is not None:
             error_label.destroy()
-        similar_images, results = get_similar_images(file_path_global, alg, 5, "../../dataset/WikiArt.csv")
+        similar_images, results = get_similar_images(file_path_global, alg, 5, )
 
     if similar_images is not None:
         h = 0
@@ -110,7 +111,7 @@ def set_hdbscan():
     global alg
     alg = "dbscan"
 
-def start_gui(dataset_path):
+def start_gui(dataset_path, csv_path):
     global type_art
     global accuracy_art
     global output_labels
@@ -169,4 +170,4 @@ def start_gui(dataset_path):
     # Avvio dell'interfaccia grafica
     root.mainloop()
 
-start_gui(dataset)
+start_gui(dataset, csv_filepath)
