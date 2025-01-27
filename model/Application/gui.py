@@ -1,4 +1,5 @@
 import tkinter as tk
+from contextlib import nullcontext
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -9,6 +10,11 @@ file_path_global = None
 error_label = None
 results = [None, None, None, None, None]
 thread = None
+type_art = None
+accuracy_art = None
+output_labels = []
+input_image_label = None
+root = None
 
 def upload_image():
     global file_path_global
@@ -43,7 +49,7 @@ def load_similar_images():
     else:
         if error_label is not None:
             error_label.destroy()
-        similar_images, results = get_similar_images(file_path_global, alg, 5)
+        similar_images, results = get_similar_images(file_path_global, alg, 5, "../../dataset/WikiArt.csv")
 
     if similar_images is not None:
         h = 0
@@ -103,53 +109,59 @@ def set_hdbscan():
     global alg
     alg = "dbscan"
 
-# Configurazione della finestra principale
-root = tk.Tk()
-root.title("ArtAi")
-root.geometry("1400x400")
+def start_gui():
+    global type_art
+    global accuracy_art
+    global output_labels
+    global input_image_label
+    global root
+    # Configurazione della finestra principale
+    root = tk.Tk()
+    root.title("ArtAi")
+    root.geometry("1400x400")
 
-menu_bar = tk.Menu(root)
-menu_algoritmi = tk.Menu(menu_bar, tearoff=0)
-menu_algoritmi.add_command(label="Kmeans", command=set_kmeans)
-menu_algoritmi.add_command(label="Bottomup", command=set_bottomup)
-menu_algoritmi.add_command(label="DBSCAN", command=set_hdbscan)
+    menu_bar = tk.Menu(root)
+    menu_algoritmi = tk.Menu(menu_bar, tearoff=0)
+    menu_algoritmi.add_command(label="Kmeans", command=set_kmeans)
+    menu_algoritmi.add_command(label="Bottomup", command=set_bottomup)
+    menu_algoritmi.add_command(label="DBSCAN", command=set_hdbscan)
 
-menu_valutazione = tk.Menu(menu_bar, tearoff=0)
-menu_valutazione.add_command(label="Precisione", command=estrai_precisione)
+    menu_valutazione = tk.Menu(menu_bar, tearoff=0)
+    menu_valutazione.add_command(label="Precisione", command=estrai_precisione)
 
-menu_bar.add_cascade(label="Algoritmo", menu=menu_algoritmi)
-menu_bar.add_cascade(label="Valutazione", menu=menu_valutazione)
-root.config(menu=menu_bar)
+    menu_bar.add_cascade(label="Algoritmo", menu=menu_algoritmi)
+    menu_bar.add_cascade(label="Valutazione", menu=menu_valutazione)
+    root.config(menu=menu_bar)
 
-# Etichetta e pulsante per l'immagine di input
-ttk.Label(root, text="Carica un'immagine:").grid(row=0, column=0, padx=10, pady=10)
-upload_button = ttk.Button(root, text="Scegli file", command=upload_image)
-upload_button.grid(row=0, column=1, padx=10, pady=10)
+    # Etichetta e pulsante per l'immagine di input
+    ttk.Label(root, text="Carica un'immagine:").grid(row=0, column=0, padx=10, pady=10)
+    upload_button = ttk.Button(root, text="Scegli file", command=upload_image)
+    upload_button.grid(row=0, column=1, padx=10, pady=10)
 
-#Etichetta e pulsante per l'output delle immagini
-ttk.Label(root, text="Trova Immagini:").grid(row=0, column=2, padx=10, pady=10)
-upload_button = ttk.Button(root, text="Cerca", command=load_similar_images)
-upload_button.grid(row=0, column=3, padx=10, pady=10)
+    # Etichetta e pulsante per l'output delle immagini
+    ttk.Label(root, text="Trova Immagini:").grid(row=0, column=2, padx=10, pady=10)
+    upload_button = ttk.Button(root, text="Cerca", command=load_similar_images)
+    upload_button.grid(row=0, column=3, padx=10, pady=10)
 
-# Mostra l'immagine di input
-input_image_label = ttk.Label(root)
-input_image_label.grid(row=1, column=0, columnspan=2, pady=20)
+    # Mostra l'immagine di input
+    input_image_label = ttk.Label(root)
+    input_image_label.grid(row=1, column=0, columnspan=2, pady=20)
 
-# Etichette per mostrare le immagini simili
-output_labels = []
-stock_path = "line-drawing-of-an-empty-square-frame-on-a-white_534611_wh860.png"
-stock_img = Image.open(stock_path).resize((200, 200))
-stock_img_tk = ImageTk.PhotoImage(stock_img)
+    # Etichette per mostrare le immagini simili
+    stock_path = "line-drawing-of-an-empty-square-frame-on-a-white_534611_wh860.png"
+    stock_img = Image.open(stock_path).resize((200, 200))
+    stock_img_tk = ImageTk.PhotoImage(stock_img)
 
-for i in range(5):
-    label = ttk.Label(root)
-    label.grid(row=1, column=i+2, padx=10, pady=10)
+    for i in range(5):
+        label = ttk.Label(root)
+    label.grid(row=1, column=i + 2, padx=10, pady=10)
     label.configure(image=stock_img_tk)
     label.image = stock_img_tk
     output_labels.append(label)
 
-type_art = ttk.Label(root)
-accuracy_art = ttk.Label(root)
+    type_art = ttk.Label(root)
+    accuracy_art = ttk.Label(root)
 
-# Avvio dell'interfaccia grafica
-root.mainloop()
+    # Avvio dell'interfaccia grafica
+    root.mainloop()
+

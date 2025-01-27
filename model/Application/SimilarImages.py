@@ -11,7 +11,7 @@ from sklearn.decomposition import PCA
 from model.Clustering.UpdateClustering import update_dataset
 from model.Features.CNN import extract_features_CNNauto
 
-def get_similar_images(image_path, alg, n):
+def get_similar_images(image_path, alg, n, csv_path):
     results = None
     start = time.time()
     if alg == "kmeans":
@@ -71,7 +71,7 @@ def get_similar_images(image_path, alg, n):
 
     #Predizione del tipo di opera d'arte
     type_arts = []
-    with open("../../dataset/WikiArt.csv", mode = "r") as f:
+    with open(csv_path, mode = "r") as f:
         reader = csv.reader(f)
         for row in reader:
             for img in similar_images:

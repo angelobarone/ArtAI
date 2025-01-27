@@ -10,7 +10,7 @@ from model.Evaluation.Silhouette import find_optimal_silhouette
 from model.Evaluation.show import show_dendrogram, show_clusters_3d, show_centroids_2d
 from model.Evaluation.utils import get_centroids, get_clusters
 
-def applicate_BottomUp(preloaded_path, save_folder):
+def applicate_BottomUp(preloaded_path, save_folder, dataset_path):
     preloaded_path_X = os.path.join(preloaded_path, "X.npy")
     preloaded_path_image_list = os.path.join(preloaded_path, "image_list.npy")
     preloaded_path_dendrogram = os.path.join(save_folder, "dendrogram.npy")
@@ -24,7 +24,7 @@ def applicate_BottomUp(preloaded_path, save_folder):
         with open(preloaded_path_silhouette, "r") as f:
             k = int(f.read())
     else:
-        X, image_list = load_dataset_from_folder("..\\..\\dataset\\01.mixed")
+        X, image_list = load_dataset_from_folder("..\\" + dataset_path)
         Z = linkage(X, method='ward')
         k = find_optimal_silhouette(X, 190, 300)
         np.save(preloaded_path_X, X)
@@ -85,4 +85,4 @@ def applicate_BottomUp(preloaded_path, save_folder):
     tempo_impiegato = end - start
     print("Tempo impiegato: " + str(tempo_impiegato))
 
-applicate_BottomUp("preloaded", "BottomUp")
+applicate_BottomUp("preloaded", "BottomUp", "..\\dataset\\01.mixed")

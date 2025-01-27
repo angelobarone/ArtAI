@@ -9,17 +9,16 @@ from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.show import show_clusters_3d
 from model.Evaluation.utils import get_clusters, get_centroids
 
-def applicate_DBSCAN():
-    preloaded_path_X = "preloaded\\X.npy"
-    preloaded_path_image_list = "preloaded\\image_list.npy"
+def applicate_DBSCAN(preloaded_path, save_path, dataset_path):
+    preloaded_path_X = preloaded_path + "\\X.npy"
+    preloaded_path_image_list = preloaded_path + "\\image_list.npy"
 
-    # carica il Dataset
     if os.path.exists(preloaded_path_X) and os.path.exists(preloaded_path_image_list):
         X = np.load(preloaded_path_X)
         image_list = np.load(preloaded_path_image_list)
 
     else:
-        X, image_list = load_dataset_from_folder("..\\..\\dataset\\01.mixed")
+        X, image_list = load_dataset_from_folder("..\\" + dataset_path)
         np.save("preloaded\\X.npy", X)
         np.save("preloaded\\image_list.npy", image_list)
 
@@ -56,14 +55,14 @@ def applicate_DBSCAN():
     #Visualizziamo i Clusters in 3d
     show_clusters_3d(X, labels)
 
-    with open("DBSCAN\\resultTraining.txt", "w") as file:
+    with open(save_path() + "\\resultTraining.txt", "w") as file:
         file.write(str(silhouette) + "\n")
         for i in range(len(clusters)):
             file.write(str(i) + ": " + str(clusters[i]))
 
-    np.save("DBSCAN\\centroidsDBSCAN.npy", centroids)
-    np.save("DBSCAN\\labelsDBSCAN.npy", labels)
-    np.save("DBSCAN\\resultsDBSCAN.npy", results)
+    np.save(save_path + "\\centroidsDBSCAN.npy", centroids)
+    np.save(save_path + "\\labelsDBSCAN.npy", labels)
+    np.save(save_path + "\\resultsDBSCAN.npy", results)
 
     for i in range(len(clusters)):
         print(str(i) + ": " + str(clusters[i]))

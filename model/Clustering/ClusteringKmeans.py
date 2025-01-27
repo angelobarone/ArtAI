@@ -9,7 +9,7 @@ from model.Clustering.ImageLoader import load_dataset_from_folder
 from model.Evaluation.show import show_clusters_3d, show_clusters_2d, show_centroids_2d
 from model.Evaluation.utils import get_clusters
 
-def applicate_Kmeans(preloaded_path, save_folder):
+def applicate_Kmeans(preloaded_path, save_folder, dataset_path):
 
     preloaded_path_X = preloaded_path + "/X.npy"
     preloaded_path_image_list = preloaded_path + "/image_list.npy"
@@ -21,7 +21,7 @@ def applicate_Kmeans(preloaded_path, save_folder):
         with open(preloaded_path_elbowpoint, "r") as f:
             k = int(f.read())
     else:
-        X, image_list = load_dataset_from_folder("..\\..\\dataset\\01.mixed")
+        X, image_list = load_dataset_from_folder("..\\" + dataset_path)
         np.save(preloaded_path_X, X)
         np.save(preloaded_path_image_list, image_list)
         # Punto di gomito
@@ -71,4 +71,4 @@ def applicate_Kmeans(preloaded_path, save_folder):
     show_clusters_3d(X, labels)
     show_centroids_2d(centroids)
 
-applicate_Kmeans("preloaded", "Kmeans")
+applicate_Kmeans("preloaded", "Kmeans", "..\\dataset\\01.mixed")
