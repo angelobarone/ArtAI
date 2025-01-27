@@ -1,14 +1,8 @@
 import threading
 import time
 import csv
-from collections import Counter
-
+from collections import Counter, defaultdict
 import numpy as np
-from matplotlib import pyplot as plt
-from numpy.f2py.auxfuncs import throw_error
-from sklearn.decomposition import PCA
-
-from model.Clustering.UpdateClustering import update_dataset
 from model.Features.CNN import extract_features_CNNauto
 
 def get_similar_images(image_path, alg, n, csv_path):
@@ -65,23 +59,28 @@ def get_similar_images(image_path, alg, n, csv_path):
 
     #Estrazione delle immagini più simili all'input
     sorted_cluster = sorted(cluster, key=lambda c: np.linalg.norm(c[1]))
-    similar_images = [row[0] for row in sorted_cluster[:h]]
-    end = time.time()
-    research_time = end - start
+    similar_images =  [(row[0], np.linalg.norm(row[1])) for row in sorted_cluster[:h]]
 
-    #Predizione del tipo di opera d'arte
-    type_arts = []
-    with open(csv_path, mode = "r") as f:
+    #Predizione del tipo di opera d'arte con pesi
+    weighted_scores = defaultdict(float)
+
+    with open(csv_path, mode="r") as f:
         reader = csv.reader(f)
         for row in reader:
-            for img in similar_images:
+            for img, distance in similar_images:
                 if img in row[0]:
-                    type_arts.append(row[1])
+                    #Calcolo del peso (inversamente proporzionale alla distanza)
+                    weight = 1 / (distance + 1e-6)
+                    weighted_scores[row[1]] += weight  #Sommo il peso al tipo di arte corrispondente
     f.close()
-    contatore = Counter(type_arts)
-    c = contatore.most_common(1)[0]
-    tipo, occorrenze = c
-    quality = occorrenze * 100/len(similar_images)
+
+    #Determinazione del tipo con peso maggiore
+    tipo = max(weighted_scores, key=weighted_scores.get)
+    total_weight = sum(weighted_scores.values())
+    quality = (weighted_scores[tipo] / total_weight) * 100
+
+    end = time.time()
+    research_time = end - start
 
     results = [clustering_quality[0], clustering_quality[1], research_time, tipo, quality]
 
@@ -89,7 +88,5 @@ def get_similar_images(image_path, alg, n, csv_path):
     #thread = threading.Thread(target=update_dataset(X, new_features, results[3], image_path, "../../dataset/WikiArt.csv"))
     #thread.start()
 
-    #Nel caso di estrazione casuale
-    #similar_images = np.random.choice(cluster, size=h, replace=False)
     return similar_images, results
 
