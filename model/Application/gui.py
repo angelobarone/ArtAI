@@ -1,5 +1,4 @@
 import tkinter as tk
-from contextlib import nullcontext
 from tkinter import filedialog
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -17,6 +16,7 @@ input_image_label = None
 root = None
 dataset = "..\\..\\dataset\\01.mixed\\"
 csv_filepath = "../../dataset/WikiArt.csv"
+stock_img_tk = None
 
 def upload_image():
     global file_path_global
@@ -51,12 +51,12 @@ def load_similar_images():
     else:
         if error_label is not None:
             error_label.destroy()
-        similar_images, results = get_similar_images(file_path_global, alg, 5, )
+        similar_images, results = get_similar_images(file_path_global, alg, 5, csv_filepath)
 
     if similar_images is not None:
         h = 0
         for img_name in similar_images:
-            img_path = dataset + str(img_name)
+            img_path = dataset + str(img_name[0])
             img = Image.open(img_path).resize((200, 200))
             img_tk = ImageTk.PhotoImage(img)
             output_labels[h].configure(image=img_tk)
@@ -118,6 +118,9 @@ def start_gui(dataset_path, csv_path):
     global input_image_label
     global root
     global dataset
+    global stock_img_tk
+    global csv_filepath
+    csv_filepath = str(csv_path)
     dataset = str(dataset_path)
 
     # Configurazione della finestra principale
@@ -159,10 +162,10 @@ def start_gui(dataset_path, csv_path):
 
     for i in range(5):
         label = ttk.Label(root)
-    label.grid(row=1, column=i + 2, padx=10, pady=10)
-    label.configure(image=stock_img_tk)
-    label.image = stock_img_tk
-    output_labels.append(label)
+        label.grid(row=1, column=i + 2, padx=10, pady=10)
+        label.configure(image=stock_img_tk)
+        label.image = stock_img_tk
+        output_labels.append(label)
 
     type_art = ttk.Label(root)
     accuracy_art = ttk.Label(root)
