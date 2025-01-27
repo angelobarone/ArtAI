@@ -15,6 +15,7 @@ accuracy_art = None
 output_labels = []
 input_image_label = None
 root = None
+dataset = "..\\..\\dataset\\01.mixed\\"
 
 def upload_image():
     global file_path_global
@@ -54,7 +55,7 @@ def load_similar_images():
     if similar_images is not None:
         h = 0
         for img_name in similar_images:
-            img_path = "..\\..\\dataset\\01.mixed\\" + str(img_name)
+            img_path = dataset + str(img_name)
             img = Image.open(img_path).resize((200, 200))
             img_tk = ImageTk.PhotoImage(img)
             output_labels[h].configure(image=img_tk)
@@ -109,12 +110,15 @@ def set_hdbscan():
     global alg
     alg = "dbscan"
 
-def start_gui():
+def start_gui(dataset_path):
     global type_art
     global accuracy_art
     global output_labels
     global input_image_label
     global root
+    global dataset
+    dataset = str(dataset_path)
+
     # Configurazione della finestra principale
     root = tk.Tk()
     root.title("ArtAi")
@@ -165,3 +169,4 @@ def start_gui():
     # Avvio dell'interfaccia grafica
     root.mainloop()
 
+start_gui(dataset)
