@@ -1,4 +1,4 @@
-<p align="center"><img src="" height="400"></p>
+<p align="center"><img src="https://github.com/angelobarone/ArtAI/blob/master/logoArtaiwhite.png" height="400"></p>
 
 # ArtAi - Clusterizzazione di Immagini e Ricerca di Immagini Simili
 ArtAi `e un progetto sviluppato per fornire un sistema in grado di clusterizzare un dataset
