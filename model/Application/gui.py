@@ -7,7 +7,8 @@ from model.Application.SimilarImages import get_similar_images
 alg = "kmeans"
 file_path_global = None
 error_label = None
-results = [None, None]
+results = [None, None, None, None, None]
+thread = None
 
 def upload_image():
     global file_path_global
@@ -54,6 +55,20 @@ def load_similar_images():
             output_labels[h].image = img_tk
             h += 1
 
+    if results[3] is not None:
+        global type_art
+        type_art.destroy()
+        # Etichetta per mostrare il tipo di opera d'arte
+        type_art = ttk.Label(root, text="Tipo di opera: " + str(results[3]))
+        type_art.grid(row=2, column=0, padx=10, pady=10)
+
+    if results[4] is not None:
+        global accuracy_art
+        accuracy_art.destroy()
+        # Etichetta per mostrare l'accuracy della previsione sul tipo di immagine
+        accuracy_art = ttk.Label(root, text="Accuracy Previsione: " + str(results[4]))
+        accuracy_art.grid(row=2, column=1, padx=10, pady=10)
+
 def estrai_precisione():
     global results
     popup = tk.Toplevel(root)
@@ -68,6 +83,9 @@ def estrai_precisione():
 
     label2 = tk.Label(popup, text="Davies-Bouldin score: "+str(results[1]))
     label2.pack(pady=10)
+
+    label4 = tk.Label(popup, text="Tempo di esecuzione: " + str(results[2]))
+    label4.pack(pady=10)
 
     close_button = tk.Button(popup, text="Chiudi", command=popup.destroy)
     close_button.pack(pady=10)
@@ -88,7 +106,7 @@ def set_hdbscan():
 # Configurazione della finestra principale
 root = tk.Tk()
 root.title("ArtAi")
-root.geometry("1400x300")
+root.geometry("1400x400")
 
 menu_bar = tk.Menu(root)
 menu_algoritmi = tk.Menu(menu_bar, tearoff=0)
@@ -101,7 +119,6 @@ menu_valutazione.add_command(label="Precisione", command=estrai_precisione)
 
 menu_bar.add_cascade(label="Algoritmo", menu=menu_algoritmi)
 menu_bar.add_cascade(label="Valutazione", menu=menu_valutazione)
-
 root.config(menu=menu_bar)
 
 # Etichetta e pulsante per l'immagine di input
@@ -130,6 +147,9 @@ for i in range(5):
     label.configure(image=stock_img_tk)
     label.image = stock_img_tk
     output_labels.append(label)
+
+type_art = ttk.Label(root)
+accuracy_art = ttk.Label(root)
 
 # Avvio dell'interfaccia grafica
 root.mainloop()
